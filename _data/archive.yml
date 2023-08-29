@@ -3,7 +3,7 @@
   url: /
 - type: dates
   title: Dates
-  url: /dates
+  url: /dates/
 - type: tags
   title: Tags
   url: /tags/
