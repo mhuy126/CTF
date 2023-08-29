@@ -1,0 +1,9 @@
+- type: ctf
+  title: CTF
+  url: /
+- type: dates
+  title: Dates
+  url: /dates
+- type: tags
+  title: Tags
+  url: /tags/
