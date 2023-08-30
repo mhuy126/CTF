@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Anonymous
+title: TryHackeMe - Anonymous
 date: 2023-08-24 08:21:16 +0700
 tags: [security, medium, linux, permissions]
 toc: true
