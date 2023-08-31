@@ -1,6 +1,6 @@
 ---
 layout: post
-title: TryHackeMe - Boiler CTF
+title: TryHackMe - Boiler CTF
 date: 2023-08-20 08:24:16 +0700
 tags: [ctf, ftp, ssh, webmin]
 toc: true

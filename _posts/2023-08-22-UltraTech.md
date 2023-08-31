@@ -1,6 +1,6 @@
 ---
 layout: post
-title: TryHackeMe - UltraTech
+title: TryHackMe - UltraTech
 date: 2023-08-24 08:21:16 +0700
 tags: [security, pentest, enumeration, web]
 toc: true

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: TryHackeMe - Biohazard
+title: TryHackMe - Biohazard
 date: 2023-08-24 08:24:16 +0700
 tags: [cipher, base, root, stego]
 toc: true
