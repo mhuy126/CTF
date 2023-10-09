@@ -106,6 +106,8 @@ The `main()` function calls to 2 more functions `sym.vuln()` and `sym.gfl()`.
 
 While the `sym.glf()` function returns the flag of the room:
 
+{% raw %}
+
 ```
 [0x000012f6]> s sym.gfl
 [0x00001289]> pdf
@@ -150,12 +152,18 @@ While the `sym.glf()` function returns the flag of the room:
 └           0x000012f5      c3             ret
 ```
 
+{% endraw %}
+
+{% raw %}
+
 ```
 │  │╎││╎│   0x000012bb      89c6           mov esi, eax
 │  │╎││╎│   0x000012bd      488d3d790d00.  lea rdi, str.THM_d_d        ; 0x203d ; "THM{%d%d}" ; const char *format
 │  │╎││╎│   0x000012c4      b800000000     mov eax, 0
 │  │╎││╎│   0x000012c9      e882fdffff     call sym.imp.printf         ; int printf(const char *format)
 ```
+
+{% endraw %}
 
 The another `sym.vuln()` carries on the authentication process that compare the **input value** with the **authenticated string**:
 
