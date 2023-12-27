@@ -2,7 +2,7 @@
 layout: post
 title: TryHackMe - Super Secret Tip
 date: 2023-12-27 17:05:00 +0700
-tags: [security, web, python, encryption]
+tags: [security, web, python, encryption, privesc, SSTI, cronjobs]
 toc: true
 ---
 
@@ -299,13 +299,13 @@ def download():
         return render_template('cloud.html')
     else:
         download = request.form['download']
-    if download == 'source.py':
-        return send_file('./source.py', as_attachment=True)
-    if download[-4:] == '.txt':
-        print('download: ' + download)
-        return send_from_directory(app.root_path, download, as_attachment=True)
-    else:
-        return send_from_directory(app.root_path + "/cloud", download, as_attachment=True) # return render_template('cloud.html', msg="Network error occurred")
+        if download == 'source.py':
+            return send_file('./source.py', as_attachment=True)
+        if download[-4:] == '.txt':
+            print('download: ' + download)
+            return send_from_directory(app.root_path, download, as_attachment=True)
+        else:
+            return send_from_directory(app.root_path + "/cloud", download, as_attachment=True) # return render_template('cloud.html', msg="Network error occurred")
 
 @app.route("/debug", methods=["GET"])
 def debug():
