@@ -356,8 +356,8 @@ return abort(401, "Everything made in home, we don't like intruders.")
 def index():
     return render_template('index.html')
 
-    if **name** == "**main**":
-        app.run(host="0.0.0.0", port=7777, debug=False)
+if **name** == "**main**":
+    app.run(host="0.0.0.0", port=7777, debug=False)
 ```
 
 Read a few first lines from the script, I notice that there is a file placed in the same directory with this source code which is ‘supersecrettip.txt’. So I decided to download it using `curl`:
