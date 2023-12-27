@@ -380,7 +380,7 @@ def get_encrypted(passwd):
 ```
 
 <p class="message">
-💡 The ‘debugpassword.py%00.txt’ will become ‘debugpassword.py’ because the ‘.txt’ is ignored after the NULL BYTE `%00`
+💡 The ‘<pre>debugpassword.py%00.txt</pre>’ will become ‘<pre>debugpassword.py</pre>’ because the ‘<pre>.txt</pre>’ is ignored after the <strong>NULL BYTE `%00`</strong>
 
 </p>
 
