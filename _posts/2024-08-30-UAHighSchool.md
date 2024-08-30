@@ -1,7 +1,7 @@
 ---
 layout: post
 title: TryHackMe - U.A High School
-date: 2024-08-30 10:05:00 +0700
+date: 2024-08-30 09:05:00 +0700
 tags: [web-app, rce, stego, privesc]
 toc: true
 ---
