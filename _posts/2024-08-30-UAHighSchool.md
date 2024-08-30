@@ -410,7 +410,7 @@ I used **`xxd`** to view the binary signature of the image for more details:
 
 As expected, despite the extension of the file being **`.jpg`**, the header signature of the file was displayed as PNG within incorrect marker code hex values. The correct result should be: 
 
-<mark>**`89 50 4E 47 0D 0A 1A 0A`**</mark> -> <mark>**`FF D8 FF E0 00 10 4A 46 49 46 00 01`**</mark>
+<strong><mark>89 50 4E 47 0D 0A 1A 0A</mark></strong> -> <strong><mark>FF D8 FF E0 00 10 4A 46 49 46 00 01</mark></strong>
 
 Using **`hexedit`** tool to modify the hex value of the image to correct its format:
 
